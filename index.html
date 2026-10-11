@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light dark">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title data-en="Clinics" data-ar="العيادات">Clinics</title>
+  <link rel="icon" href="egyptair-logo_.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="portal.css">
+  <script>
+    /* Apply saved language / theme before first paint (no flash on phones). */
+    (function () {
+      try {
+        var d = document.documentElement, s = window.localStorage;
+        var l = s.getItem('egyptairPortal:language') || s.getItem('holidayPlanner:language') || 'en';
+        var th = s.getItem('egyptairPortal:theme') ||
+          (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        d.lang = l === 'ar' ? 'ar' : 'en';
+        d.dir = l === 'ar' ? 'rtl' : 'ltr';
+        d.dataset.theme = th === 'dark' ? 'dark' : 'light';
+      } catch (e) { /* defaults apply */ }
+    })();
+  </script>
+</head>
+<body>
+  <header class="portal-header">
+    <div class="brand" aria-label="EgyptAir">
+      <img src="egyptair-logo_.png" alt="EgyptAir logo" width="64" height="44">
+      <span>
+        <strong data-en="EgyptAir In-Flight Services Clinics" data-ar="مركز عيادات مصر للطيران للخدمات الجوية">EgyptAir In-Flight Services Clinics</strong>
+        <small data-en="Human Resources Management" data-ar="ادارة الموارد البشرية">ادارة الموارد البشرية</small>
+      </span>
+    </div>
+
+    <div class="portal-actions" role="group" aria-label="Display controls">
+      <button class="segmented-btn active" type="button" data-lang-option="en" aria-pressed="true">EN</button>
+      <button class="segmented-btn" type="button" data-lang-option="ar" aria-pressed="false">AR</button>
+      <button class="theme-btn" type="button" data-theme-toggle data-en="Dark" data-ar="داكن">Dark</button>
+    </div>
+  </header>
+
+  <main class="app-page clinics-layout" id="main">
+    <noscript><p class="empty-state">JavaScript is required to use this page. / هذه الصفحة تحتاج إلى تفعيل JavaScript.</p></noscript>
+
+    <section class="clinic-hero" aria-labelledby="heroTitle">
+      <div>
+        <h1 id="heroTitle" data-en="Clinic reservations" data-ar="حجوزات العيادات">Clinic reservations</h1>
+      </div>
+      <p data-en="Book a visit to one of the clinics, or look up a reservation you already made." data-ar="احجز موعدًا في إحدى العيادات، أو استعلم عن حجز سجلته من قبل.">Book a visit to one of the clinics, or look up a reservation you already made.</p>
+      <div class="hero-action">
+        <button class="cta-btn" id="reserveBtn" type="button" data-en="Place a reservation" data-ar="تسجيل حجز">Place a reservation</button>
+        <span class="hero-note" data-en="The form opens in a new tab." data-ar="يفتح النموذج في تبويب جديد.">The form opens in a new tab.</span>
+      </div>
+    </section>
+
+    <section class="panel-card inquiry-card" aria-labelledby="inquiryTitle">
+      <h2 id="inquiryTitle" data-en="Check your reservation" data-ar="استعلام عن الحجز">Check your reservation</h2>
+      <p data-en="Enter the employee ID you used on the form to see your reserved clinics and their status." data-ar="أدخل كود الموظف الذي استخدمته في النموذج لعرض العيادات المحجوزة وحالتها.">Enter the employee ID you used on the form to see your reserved clinics and their status.</p>
+
+      <form id="inquiryForm" novalidate>
+        <label for="patientId" data-en="Patient ID (Inquiry)" data-ar="كود الموظف (استعلام)">Patient ID (Inquiry)</label>
+        <div class="inquiry-row">
+          <div class="input-clear-wrap">
+            <input class="id-input" id="patientId" type="text" inputmode="numeric" enterkeyhint="search"
+                   autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="20"
+                   data-en-placeholder="Enter ID" data-ar-placeholder="أدخل الكود">
+            <button class="input-clear-btn hidden" id="clearInquiryBtn" type="button"
+                    data-en-label="Clear" data-ar-label="مسح" aria-label="Clear">&times;</button>
+          </div>
+          <button class="primary-btn" id="inquiryBtn" type="submit" data-en="Inquiry" data-ar="استعلام">Inquiry</button>
+        </div>
+      </form>
+
+      <p class="status-line" id="inquiryStatus" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel-card results-panel hidden" id="resultsPanel" aria-labelledby="resultsTitle">
+      <div class="results-head">
+        <h2 id="resultsTitle" tabindex="-1"></h2>
+        <span class="count-chip" id="resultsCount"></span>
+      </div>
+      <p class="empty-state hidden" id="resultsEmpty"></p>
+      <div class="table-wrap" id="resultsTableWrap">
+        <table class="results-table">
+          <thead id="resultsHead"></thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="portal-footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <span><strong>Contact Us</strong></span>
+        <span id="contactMail"></span>
+        <span id="contactTel"></span>
+      </div>
+      <div class="footer-copyright">
+        &copy; 2026 Egyptair inflight services. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="site-data.js"></script>
+  <script src="portal.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    const P = window.EgyptAirPortal;
+    const S = P.secure;
+    const $ = id => document.getElementById(id);
+
+    /* Links and contact details are stored sealed (see portal.js → secure.seal)
+       and only decoded in memory at the moment they are used. To change one:
+       open the page, run  EgyptAirPortal.secure.seal('new value', 'form')  in the
+       console ('form' | 'api' | 'contact') and paste the result below. */
+    const SEALED = {
+      form: '5v70ZLdS3xbo8bZ5iRcDanFbs/MWxl06eng0hKFHsQKQBffpCNmMXNmTYV08eRo=',
+      api: 'IAUmRZPAisVYL2WVrVRLg0ewNB7OnIJ6G3tRbDcIwLDvKTq3Ey0GVuhuTr7OUmyjasyrnnaXQzECzcr2z3eusKv1JLg0HqjYMKw25B0cdGSovktI+UDEvkZBYum/+PkBSwATh+LO4MyQ631MoYz0jUlZhkO4Jefjj1DT8Q==',
+      contact: 'd/IWVQIKifVd4SChI7agPtdyGpOjo6a93hmsxfyCXHGu1SMzrdFUD8zIDgj/nXJWD8tjJoQE5QCwFq4Bm9Yv5A=='
+    };
+
+    const REQUEST_TIMEOUT_MS = 15000;
+    const MAX_ATTEMPTS = 3;            // retries amplify load, so keep them few
+    const RESULT_CACHE_MS = 45000;     // same ID again within 45 s: no new request
+    const SNAPSHOT_CACHE_MS = 60000;   // older backend only: reuse the full download
+    const MODE_KEY = 'ea:clinics:mode';
+
+    const form = $('inquiryForm');
+    const input = $('patientId');
+    const inquiryBtn = $('inquiryBtn');
+    const clearBtn = $('clearInquiryBtn');
+    const statusLine = $('inquiryStatus');
+    const resultsPanel = $('resultsPanel');
+    const resultsTitle = $('resultsTitle');
+    const resultsCount = $('resultsCount');
+    const resultsEmpty = $('resultsEmpty');
+    const resultsTableWrap = $('resultsTableWrap');
+    const resultsHead = $('resultsHead');
+    const resultsBody = $('resultsBody');
+
+    const lang = () => P.language;
+    const t = (en, ar) => (lang() === 'ar' ? ar : en);
+
+    // Stored as an English/Arabic pair so it follows the language toggle.
+    let statusMsg = ['', ''], statusIsError = false;
+    function paintStatus() {
+      statusLine.textContent = statusMsg[lang() === 'ar' ? 1 : 0] || '';
+      statusLine.classList.toggle('error', statusIsError);
+    }
+    function setStatus(en, ar, isError) {
+      statusMsg = [en || '', ar || ''];
+      statusIsError = !!isError;
+      paintStatus();
+    }
+
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    /* ── Text helpers ────────────────────────────────────────────────── */
+    function normalizeDigits(value) {
+      return String(value == null ? '' : value)
+        .replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660))
+        .replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x06F0));
+    }
+
+    const pad2 = n => String(n).padStart(2, '0');
+    const NEAREST_TIME_VALUE = 'اقرب وقت';
+    const ARABIC_WEEKDAYS = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+    // Every date shape the sheet can contain → {y, m, d}, or null if it isn't a date.
+    // Handles "2026-08-16 - الأحد", yyyy/mm/dd, d/m/yyyy and "M/d/yyyy HH:mm:ss".
+    function parseDate(value) {
+      const str = normalizeDigits(value).trim();
+      let m = str.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+      if (m) return { y: +m[1], m: +m[2], d: +m[3] };
+      m = str.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})(.*)$/);
+      if (m) {
+        const a = +m[1], b = +m[2];
+        const hasTime = /\d{1,2}:\d{2}/.test(m[4]);
+        return (hasTime || (b > 12 && a <= 12)) ? { y: +m[3], m: a, d: b } : { y: +m[3], m: b, d: a };
+      }
+      return null;
+    }
+
+    function displayDate(raw) {
+      const text = String(raw == null ? '' : raw).trim();
+      if (!text) return '\u2014';
+      if (text === NEAREST_TIME_VALUE) return t('Nearest available time', 'أقرب موعد متاح');
+      const p = parseDate(text);
+      if (!p || p.m < 1 || p.m > 12 || p.d < 1 || p.d > 31) return text;
+      const date = new Date(Date.UTC(p.y, p.m - 1, p.d));
+      try {
+        const locale = lang() === 'ar' ? 'ar-EG-u-nu-latn' : 'en-GB';
+        return new Intl.DateTimeFormat(locale, {
+          weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'
+        }).format(date);
+      } catch (e) {
+        return `${p.y}/${pad2(p.m)}/${pad2(p.d)} - ${ARABIC_WEEKDAYS[date.getUTCDay()]}`;
+      }
+    }
+
+    function statusLabel(status) {
+      if (status === 'y') return t('Confirmed', 'تم التأكيد');
+      if (status === 'n') return t('Denied', 'تم الرفض');
+      return t('Pending', 'قيد الانتظار');
+    }
+
+    /* ── Sheet columns ───────────────────────────────────────────────── */
+    const MATCH = {
+      code: ['code', 'كود', 'الموظف', 'emp'],
+      name: ['name', 'الاسم'],
+      clinic: ['clinic', 'العيادة'],
+      date: ['date', 'التاريخ'],
+      shift: ['shift', 'ميعاد', 'النوبة'],
+      department: ['ادار', 'department', 'management'],
+      reserved: ['isreserved']
+    };
+
+    function mapColumns(headers) {
+      const labels = headers.map(h => String(h || '').trim().toLowerCase().replace(/[أإآ]/g, 'ا'));
+      const find = matchers => labels.findIndex(label => matchers.some(m => label.includes(m)));
+      const map = {};
+      Object.keys(MATCH).forEach(key => { map[key] = find(MATCH[key]); });
+      return map;
+    }
+
+    // Keeps only what a patient needs. E-mail, timestamp and the plain employee
+    // code are dropped; the code survives only as a SHA-256 hash (`key`).
+    function parseSheet(headers, rows) {
+      const c = mapColumns(headers || []);
+      if (c.clinic < 0 && c.name < 0) throw new Error('format');
+      const cell = (row, key) => (c[key] >= 0 ? String(row[c[key]] == null ? '' : row[c[key]]).trim() : '');
+      return {
+        hasCode: c.code >= 0,
+        list: (rows || []).map((row, seq) => {
+          const status = cell(row, 'reserved').toLowerCase();
+          return {
+            key: c.code >= 0 ? S.sha256Hex(normalizeDigits(cell(row, 'code')).trim()) : '',
+            name: cell(row, 'name'),
+            clinic: cell(row, 'clinic'),
+            date: cell(row, 'date'),
+            shift: cell(row, 'shift'),
+            department: cell(row, 'department'),
+            status: status === 'y' || status === 'n' ? status : '',
+            seq
+          };
+        })
+      };
+    }
+
+    // Pending first, then newest first.
+    function sortReservations(list) {
+      return list.slice().sort((a, b) => {
+        const aDone = a.status !== '', bDone = b.status !== '';
+        if (aDone !== bDone) return aDone ? 1 : -1;
+        return b.seq - a.seq;
+      });
+    }
+
+    /* ── Network ─────────────────────────────────────────────────────── */
+    function networkError() {
+      const err = new Error('network');
+      err.isNetwork = true;
+      return err;
+    }
+
+    // JSONP: works from any host (including file:// and plain http://).
+    function jsonp(params) {
+      return new Promise((resolve, reject) => {
+        const base = S.unseal(SEALED.api, 'api');
+        if (!base) { reject(new Error('config')); return; }
+        const callback = '__ea' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        const script = document.createElement('script');
+        let settled = false, timer = null;
+
+        const finish = (fn, value) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          script.remove();
+          window[callback] = function () {};            // ignore a very late reply
+          setTimeout(() => { try { delete window[callback]; } catch (e) { window[callback] = undefined; } }, 60000);
+          fn(value);
+        };
+
+        window[callback] = result => finish(resolve, result);
+        script.onerror = () => finish(reject, networkError());
+        timer = setTimeout(() => finish(reject, networkError()), REQUEST_TIMEOUT_MS);
+
+        const query = Object.assign({}, params, { callback, _: Date.now() });
+        script.referrerPolicy = 'no-referrer';
+        script.async = true;
+        script.src = base + '?' + Object.keys(query)
+          .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(query[k])).join('&');
+        document.head.appendChild(script);
+      });
+    }
+
+    // Jittered back-off so hundreds of phones retrying together don't hit the server in lockstep.
+    async function withRetry(task) {
+      let last;
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try { return await task(); } catch (error) {
+          last = error;
+          if (!error.isNetwork) throw error;
+          if (attempt < MAX_ATTEMPTS) await sleep(900 * attempt * (0.75 + Math.random() * 0.5));
+        }
+      }
+      throw last;
+    }
+
+    let mode = null;                       // 'lookup' (server filters) | 'legacy' (full download)
+    try { mode = window.sessionStorage.getItem(MODE_KEY); } catch (e) { /* ignore */ }
+    function rememberMode(next) {
+      mode = next;
+      try { window.sessionStorage.setItem(MODE_KEY, next); } catch (e) { /* ignore */ }
+    }
+
+    const resultCache = new Map();         // sha256(id) → { at, list }
+    let snapshot = null;                   // legacy only: { at, byKey: Map<sha256(id), reservations[]> }
+
+    async function fetchLegacy(key) {
+      if (!snapshot || Date.now() - snapshot.at > SNAPSHOT_CACHE_MS) {
+        const response = await withRetry(() => jsonp({ action: 'getData' }));
+        if (!response || response.ok === false) throw new Error('server');
+        const parsed = parseSheet(response.headers, response.rows);
+        if (!parsed.hasCode) throw new Error('format');
+        const byKey = new Map();
+        parsed.list.forEach(item => {
+          if (!byKey.has(item.key)) byKey.set(item.key, []);
+          byKey.get(item.key).push(item);
+        });
+        snapshot = { at: Date.now(), byKey };   // raw rows are discarded here
+      }
+      return snapshot.byKey.get(key) || [];
+    }
+
+    async function fetchReservations(id) {
+      const key = S.sha256Hex(id);
+      const cached = resultCache.get(key);
+      if (cached && Date.now() - cached.at < RESULT_CACHE_MS) return cached.list;
+
+      let list = null;
+      if (mode !== 'legacy') {
+        // Preferred: the server returns only this employee's rows.
+        const response = await withRetry(() => jsonp({ action: 'lookup', id }));
+        if (response && response.ok === true && Array.isArray(response.rows)) {
+          rememberMode('lookup');
+          const parsed = parseSheet(response.headers, response.rows);
+          list = parsed.hasCode ? parsed.list.filter(item => item.key === key) : parsed.list;
+        } else if (response && /Invalid row or decision/i.test(String(response.error || ''))) {
+          rememberMode('legacy');               // older Apps Script without the lookup action
+        } else {
+          throw new Error('server');
+        }
+      }
+      if (list === null) list = await fetchLegacy(key);
+
+      list = sortReservations(list);
+      if (resultCache.size >= 20) resultCache.delete(resultCache.keys().next().value);
+      resultCache.set(key, { at: Date.now(), list });
+      return list;
+    }
+
+    /* ── Rendering ───────────────────────────────────────────────────── */
+    let current = null;                    // { id, list } currently on screen
+
+    function renderResults() {
+      if (!current) return;
+      const { id, list } = current;
+
+      resultsPanel.classList.remove('hidden');
+      resultsTitle.textContent = t(`Reservations for ID ${id}`, `حجوزات الكود ${id}`);
+      resultsCount.textContent = String(list.length);
+      resultsCount.classList.toggle('hidden', !list.length);
+      resultsEmpty.classList.toggle('hidden', !!list.length);
+      resultsTableWrap.classList.toggle('hidden', !list.length);
+
+      if (!list.length) {
+        resultsEmpty.textContent = t(
+          'No reservations found for this ID. Check the number and try again. Older reservations are removed automatically.',
+          'لا توجد حجوزات لهذا الكود. تأكد من الرقم وحاول مرة أخرى. يتم حذف الحجوزات القديمة تلقائيًا.'
+        );
+        resultsHead.replaceChildren();
+        resultsBody.replaceChildren();
+        return;
+      }
+
+      const labels = {
+        date: t('Date', 'التاريخ'),
+        shift: t('Shift', 'ميعاد النوبة'),
+        name: t('Name', 'الاسم'),
+        department: t('Department', 'الادارة')
+      };
+
+      const headRow = el('tr');
+      [t('Clinic', 'العيادة'), labels.date, labels.shift, labels.name, labels.department, t('Status', 'الحالة')]
+        .forEach(text => headRow.appendChild(el('th', '', text)));
+      resultsHead.replaceChildren(headRow);
+
+      const rows = list.map(item => {
+        const tr = el('tr');
+        tr.appendChild(el('td', 'cell-clinic', item.clinic || '\u2014'));
+
+        const addField = (key, text) => {
+          const td = el('td');
+          td.setAttribute('data-label', labels[key]);
+          td.appendChild(el('span', '', text || '\u2014'));
+          tr.appendChild(td);
+        };
+        addField('date', displayDate(item.date));
+        addField('shift', item.shift);
+        addField('name', item.name);
+        addField('department', item.department);
+
+        const statusCell = el('td', 'cell-status');
+        statusCell.appendChild(el('span', 'status-badge ' + (item.status || 'p'), statusLabel(item.status)));
+        tr.appendChild(statusCell);
+        return tr;
+      });
+      resultsBody.replaceChildren(...rows);
+    }
+
+    function revealResults() {
+      resultsPanel.classList.remove('reveal');
+      void resultsPanel.offsetWidth;                // restart the one-off fade-in
+      resultsPanel.classList.add('reveal');
+      try { resultsTitle.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      resultsPanel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }
+
+    function hideResults() {
+      current = null;
+      resultsPanel.classList.add('hidden');
+      resultsPanel.classList.remove('reveal');
+      resultsHead.replaceChildren();
+      resultsBody.replaceChildren();
+    }
+
+    /* ── Inquiry form ────────────────────────────────────────────────── */
+    let requestSeq = 0;
+    let busy = false;
+
+    function setBusy(isBusy) {
+      busy = isBusy;
+      inquiryBtn.disabled = isBusy;
+      inquiryBtn.classList.toggle('is-loading', isBusy);
+      form.setAttribute('aria-busy', String(isBusy));
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (busy) return;
+
+      const id = normalizeDigits(input.value).replace(/\s+/g, '');
+      if (!id) {
+        setStatus('Enter your employee ID.', 'أدخل كود الموظف.', true);
+        input.focus();
+        return;
+      }
+      if (!/^[0-9A-Za-z]{1,20}$/.test(id)) {
+        setStatus('The ID can only contain letters and numbers.', 'الكود يحتوي على أرقام وحروف فقط.', true);
+        input.focus();
+        return;
+      }
+
+      input.blur();                                   // closes the phone keyboard so results are visible
+      hideResults();
+      const rid = ++requestSeq;
+      setBusy(true);
+      setStatus('Searching...', 'جارٍ البحث...');
+      const slowTimer = setTimeout(() => {
+        if (rid === requestSeq) setStatus('Still searching, the server is busy...', 'ما زال البحث جاريًا، الخادم مشغول...');
+      }, 6000);
+
+      try {
+        const list = await fetchReservations(id);
+        if (rid !== requestSeq) return;
+        current = { id, list };
+        renderResults();
+        revealResults();
+        setStatus(
+          list.length ? `${list.length} reservation(s) found.` : '',
+          list.length ? `تم العثور على ${list.length} حجز.` : ''
+        );
+      } catch (error) {
+        if (rid !== requestSeq) return;
+        if (error && error.isNetwork) {
+          setStatus('Could not reach the server. Check your connection and try again.', 'تعذر الاتصال بالخادم. تأكد من الإنترنت وحاول مرة أخرى.', true);
+        } else {
+          setStatus('Something went wrong while loading reservations. Please try again.', 'حدث خطأ أثناء تحميل الحجوزات. حاول مرة أخرى.', true);
+        }
+      } finally {
+        clearTimeout(slowTimer);
+        if (rid === requestSeq) setBusy(false);
+      }
+    });
+
+    function updateClearBtn() {
+      clearBtn.classList.toggle('hidden', !input.value);
+    }
+
+    input.addEventListener('input', () => {
+      updateClearBtn();
+      if (statusIsError) setStatus('', '');
+    });
+
+    clearBtn.addEventListener('click', () => {
+      requestSeq++;                                   // drop anything still in flight
+      setBusy(false);
+      input.value = '';
+      updateClearBtn();
+      setStatus('', '');
+      hideResults();
+      input.focus();
+    });
+
+    /* ── Reservation form + footer contact (decoded only when needed) ── */
+    $('reserveBtn').addEventListener('click', () => {
+      const url = S.unseal(SEALED.form, 'form');
+      if (!url) {
+        window.showToast(t('The reservation form is unavailable right now.', 'نموذج الحجز غير متاح حاليًا.'), 'error');
+        return;
+      }
+      // A synthetic link click inside the tap is allowed by phone popup blockers.
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    });
+
+    (function fillContact() {
+      try {
+        const contact = JSON.parse(S.unseal(SEALED.contact, 'contact'));
+        if (contact.e) {
+          const a = el('a', '', contact.e);
+          a.href = 'mailto:' + contact.e;
+          $('contactMail').appendChild(a);
+        }
+        if (contact.p) {
+          const a = el('a', '', contact.p);
+          a.href = 'tel:' + contact.p;
+          $('contactTel').appendChild(a);
+        }
+      } catch (e) { /* footer simply stays empty */ }
+    })();
+
+    window.addEventListener('portal-language-change', () => {
+      paintStatus();
+      renderResults();
+      if (current) resultsPanel.classList.remove('hidden');
+    });
+
+    updateClearBtn();
+  })();
+  </script>
+</body>
+</html>
