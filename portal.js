@@ -3,6 +3,8 @@
 
   const LANGUAGE_KEY = 'egyptairPortal:language';
   const THEME_KEY = 'egyptairPortal:theme';
+  const DEFAULT_LANGUAGE = 'ar';
+  const DEFAULT_THEME = 'light';
 
   /* ── Safe storage ────────────────────────────────────────────────────────
      Some phones (iOS Safari private mode, locked-down WebViews) throw when
@@ -167,11 +169,13 @@
   }
 
   /* ── Language + theme ───────────────────────────────────────────────── */
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const savedLanguage = store.get(LANGUAGE_KEY) || store.get('holidayPlanner:language') || 'en';
-  const savedTheme = store.get(THEME_KEY) || (prefersDark ? 'dark' : 'light');
+  const savedLanguage = store.get(LANGUAGE_KEY) || store.get('holidayPlanner:language') || DEFAULT_LANGUAGE;
+  const savedTheme = store.get(THEME_KEY) || DEFAULT_THEME;
 
-  function currentLanguage() { return store.get(LANGUAGE_KEY) === 'ar' ? 'ar' : 'en'; }
+  function currentLanguage() {
+    const lang = store.get(LANGUAGE_KEY) || DEFAULT_LANGUAGE;
+    return lang === 'en' ? 'en' : 'ar';
+  }
 
   function setLanguage(language) {
     const lang = language === 'ar' ? 'ar' : 'en';
@@ -226,13 +230,13 @@
     document.querySelectorAll('[data-lang-option]').forEach((button) => {
       button.addEventListener('click', () => {
         setLanguage(button.dataset.langOption);
-        setTheme(store.get(THEME_KEY) || 'light');
+        setTheme(store.get(THEME_KEY) || DEFAULT_THEME);
       });
     });
 
     document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
       button.addEventListener('click', () => {
-        setTheme((store.get(THEME_KEY) || 'light') === 'dark' ? 'light' : 'dark');
+        setTheme((store.get(THEME_KEY) || DEFAULT_THEME) === 'dark' ? 'light' : 'dark');
       });
     });
 
