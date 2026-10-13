@@ -1,6 +1,33 @@
 (function () {
   'use strict';
 
+  /* ── Small polyfills for older phones (iOS < 10.3, Android WebView < 51 …) ── */
+  if (window.NodeList && !NodeList.prototype.forEach) {
+    NodeList.prototype.forEach = Array.prototype.forEach;
+  }
+  if (!String.prototype.padStart) {
+    String.prototype.padStart = function (len, fill) {
+      var s = String(this); len = len >> 0; fill = String(fill === undefined ? ' ' : fill);
+      if (s.length >= len || !fill) return s;
+      var pad = '';
+      while (pad.length < len - s.length) pad += fill;
+      return pad.slice(0, len - s.length) + s;
+    };
+  }
+  if (window.Element && !Element.prototype.matches) {
+    Element.prototype.matches = Element.prototype.webkitMatchesSelector || Element.prototype.msMatchesSelector;
+  }
+  if (window.Element && !Element.prototype.remove) {
+    Element.prototype.remove = function () { if (this.parentNode) this.parentNode.removeChild(this); };
+  }
+  function makeEvent(name, detail) {
+    try { return new CustomEvent(name, { detail: detail }); } catch (e) {
+      var ev = document.createEvent('CustomEvent');
+      ev.initCustomEvent(name, false, false, detail);
+      return ev;
+    }
+  }
+
   const LANGUAGE_KEY = 'egyptairPortal:language';
   const THEME_KEY = 'egyptairPortal:theme';
   const DEFAULT_LANGUAGE = 'ar';
@@ -133,7 +160,7 @@
     return out;
   }
 
-  function tagFor(ctx, plain) { return sha256Bytes(SALT + '|' + ctx + '|tag|' + plain).slice(0, 4); }
+  function tagFor(ctx, plain) { return sha256Bytes(SALT + '|' + ctx + '|tag|' + plain).subarray(0, 4); }
 
   function seal(plain, ctx) {
     const nonce = new Uint8Array(8);
@@ -155,9 +182,9 @@
       const bin = atob(String(blob));
       const bytes = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      const nonce = bytes.slice(0, 8);
-      const tag = bytes.slice(8, 12);
-      const cipher = bytes.slice(12);
+      const nonce = bytes.subarray(0, 8);
+      const tag = bytes.subarray(8, 12);
+      const cipher = bytes.subarray(12);
       const ks = keystream(ctx, toHex(nonce), cipher.length);
       const plainBytes = new Uint8Array(cipher.length);
       for (let i = 0; i < cipher.length; i++) plainBytes[i] = cipher[i] ^ ks[i];
@@ -207,7 +234,7 @@
       button.setAttribute('aria-pressed', String(active));
     });
 
-    window.dispatchEvent(new CustomEvent('portal-language-change', { detail: { language: lang } }));
+    window.dispatchEvent(makeEvent('portal-language-change', { language: lang }));
   }
 
   function setTheme(theme) {
@@ -267,7 +294,8 @@
     return container;
   }
 
-  window.showToast = function (message, type = 'info') {
+  window.showToast = function (message, type) {
+    type = type || 'info';
     const container = ensureToastContainer();
     const toast = document.createElement('div');
     toast.className = `toast toast--${type}`;

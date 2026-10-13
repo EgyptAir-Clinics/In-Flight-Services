@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffffff">
-  <meta name="color-scheme" content="light dark">
+  <meta name="color-scheme" content="light">
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
-  <title data-en="Clinics" data-ar="العيادات">Clinics</title>
+  <title data-en="Clinics" data-ar="العيادات">العيادات</title>
   <link rel="icon" href="egyptair-logo_.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,13 +18,31 @@
     (function () {
       try {
         var d = document.documentElement, s = window.localStorage;
-        var l = s.getItem('egyptairPortal:language') || s.getItem('holidayPlanner:language') || 'en';
+        var l = s.getItem('egyptairPortal:language') || s.getItem('holidayPlanner:language') || 'ar';
         var th = s.getItem('egyptairPortal:theme') ||
-          (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          'light';
         d.lang = l === 'ar' ? 'ar' : 'en';
         d.dir = l === 'ar' ? 'rtl' : 'ltr';
         d.dataset.theme = th === 'dark' ? 'dark' : 'light';
       } catch (e) { /* defaults apply */ }
+    })();
+
+    /* Flexbox `gap` detection (missing in Safari/iOS < 14.1, Chrome < 84): when
+       absent, portal.css emulates the spacing with margins under .no-flex-gap. */
+    (function () {
+      try {
+        var box = document.createElement('div');
+        box.style.cssText = 'display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden';
+        for (var i = 0; i < 2; i++) {
+          var kid = document.createElement('span');
+          kid.style.cssText = 'display:block;height:1px';
+          box.appendChild(kid);
+        }
+        document.documentElement.appendChild(box);
+        var supported = box.scrollHeight === 3;
+        document.documentElement.removeChild(box);
+        if (!supported) document.documentElement.className += ' no-flex-gap';
+      } catch (e) { /* assume supported */ }
     })();
   </script>
 </head>
@@ -33,47 +51,48 @@
     <div class="brand" aria-label="EgyptAir">
       <img src="egyptair-logo_.png" alt="EgyptAir logo" width="64" height="44">
       <span>
-        <strong data-en="EgyptAir In-Flight Services Clinics" data-ar="مركز عيادات مصر للطيران للخدمات الجوية">EgyptAir In-Flight Services Clinics</strong>
+        <strong data-en="EgyptAir In-Flight Services Clinics" data-ar="مركز عيادات مصر للطيران للخدمات الجوية">مركز عيادات مصر للطيران للخدمات الجوية</strong>
         <small data-en="Human Resources Management" data-ar="ادارة الموارد البشرية">ادارة الموارد البشرية</small>
       </span>
     </div>
 
     <div class="portal-actions" role="group" aria-label="Display controls">
-      <button class="segmented-btn active" type="button" data-lang-option="en" aria-pressed="true">EN</button>
-      <button class="segmented-btn" type="button" data-lang-option="ar" aria-pressed="false">AR</button>
-      <button class="theme-btn" type="button" data-theme-toggle data-en="Dark" data-ar="داكن">Dark</button>
+      <button class="segmented-btn" type="button" data-lang-option="en" aria-pressed="false">EN</button>
+      <button class="segmented-btn active" type="button" data-lang-option="ar" aria-pressed="true">AR</button>
+      <button class="theme-btn" type="button" data-theme-toggle data-en="Dark" data-ar="داكن">داكن</button>
     </div>
   </header>
 
   <main class="app-page clinics-layout" id="main">
+    <p class="empty-state" id="oldBrowserNotice" style="display:none" role="alert">This page needs a newer browser. Please update your browser or open the page in Chrome / Safari. / هذه الصفحة تحتاج إلى متصفح أحدث. يرجى تحديث المتصفح أو فتح الصفحة في Chrome أو Safari.</p>
     <noscript><p class="empty-state">JavaScript is required to use this page. / هذه الصفحة تحتاج إلى تفعيل JavaScript.</p></noscript>
 
     <section class="clinic-hero" aria-labelledby="heroTitle">
       <div>
-        <h1 id="heroTitle" data-en="Clinic reservations" data-ar="حجوزات العيادات">Clinic reservations</h1>
+        <h1 id="heroTitle" data-en="Clinic reservations" data-ar="حجوزات العيادات">حجوزات العيادات</h1>
       </div>
-      <p data-en="Book a visit to one of the clinics, or look up a reservation you already made." data-ar="احجز موعدًا في إحدى العيادات، أو استعلم عن حجز سجلته من قبل.">Book a visit to one of the clinics, or look up a reservation you already made.</p>
+      <p data-en="Book a visit to one of the clinics, or look up a reservation you already made." data-ar="احجز موعدًا في إحدى العيادات، أو استعلم عن حجز سجلته من قبل.">احجز موعدًا في إحدى العيادات، أو استعلم عن حجز سجلته من قبل.</p>
       <div class="hero-action">
-        <button class="cta-btn" id="reserveBtn" type="button" data-en="Place a reservation" data-ar="تسجيل حجز">Place a reservation</button>
-        <span class="hero-note" data-en="The form opens in a new tab." data-ar="يفتح النموذج في تبويب جديد.">The form opens in a new tab.</span>
+        <button class="cta-btn" id="reserveBtn" type="button" data-en="Place a reservation" data-ar="تسجيل حجز">تسجيل حجز</button>
+        <span class="hero-note" data-en="The form opens in a new tab." data-ar="يفتح النموذج في تبويب جديد.">يفتح النموذج في تبويب جديد.</span>
       </div>
     </section>
 
     <section class="panel-card inquiry-card" aria-labelledby="inquiryTitle">
-      <h2 id="inquiryTitle" data-en="Check your reservation" data-ar="استعلام عن الحجز">Check your reservation</h2>
-      <p data-en="Enter the employee ID you used on the form to see your reserved clinics and their status." data-ar="أدخل كود الموظف الذي استخدمته في النموذج لعرض العيادات المحجوزة وحالتها.">Enter the employee ID you used on the form to see your reserved clinics and their status.</p>
+      <h2 id="inquiryTitle" data-en="Check your reservation" data-ar="استعلام عن الحجز">استعلام عن الحجز</h2>
+      <p data-en="Enter the employee ID you used on the form to see your reserved clinics and their status." data-ar="أدخل كود الموظف الذي استخدمته في النموذج لعرض العيادات المحجوزة وحالتها.">أدخل كود الموظف الذي استخدمته في النموذج لعرض العيادات المحجوزة وحالتها.</p>
 
       <form id="inquiryForm" novalidate>
-        <label for="patientId" data-en="Patient ID (Inquiry)" data-ar="كود الموظف (استعلام)">Patient ID (Inquiry)</label>
+        <label for="patientId" data-en="Patient ID (Inquiry)" data-ar="كود الموظف (استعلام)">كود الموظف (استعلام)</label>
         <div class="inquiry-row">
           <div class="input-clear-wrap">
             <input class="id-input" id="patientId" type="text" inputmode="numeric" enterkeyhint="search"
                    autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="20"
                    data-en-placeholder="Enter ID" data-ar-placeholder="أدخل الكود">
             <button class="input-clear-btn hidden" id="clearInquiryBtn" type="button"
-                    data-en-label="Clear" data-ar-label="مسح" aria-label="Clear">&times;</button>
+                    data-en-label="Clear" data-ar-label="مسح" aria-label="مسح">&times;</button>
           </div>
-          <button class="primary-btn" id="inquiryBtn" type="submit" data-en="Inquiry" data-ar="استعلام">Inquiry</button>
+          <button class="primary-btn" id="inquiryBtn" type="submit" data-en="Inquiry" data-ar="استعلام">استعلام</button>
         </div>
       </form>
 
@@ -111,9 +130,16 @@
   (function () {
     'use strict';
 
-    const P = window.EgyptAirPortal;
-    const S = P.secure;
     const $ = id => document.getElementById(id);
+    const P = window.EgyptAirPortal;
+    if (!P || !window.Promise || !window.Map) {      // too old for this page: tell the person instead of failing silently
+      const note = $('oldBrowserNotice');
+      if (note) note.style.display = 'block';
+      const btn = $('inquiryBtn');
+      if (btn) btn.disabled = true;
+      return;
+    }
+    const S = P.secure;
 
     /* Links and contact details are stored sealed (see portal.js → secure.seal)
        and only decoded in memory at the moment they are used. To change one:
@@ -157,6 +183,12 @@
       statusMsg = [en || '', ar || ''];
       statusIsError = !!isError;
       paintStatus();
+    }
+
+    // Replaces all children of `node` (stand-in for Element.replaceChildren, which older phones lack).
+    function setChildren(node, kids) {
+      while (node.firstChild) node.removeChild(node.firstChild);
+      for (let i = 0; i < (kids ? kids.length : 0); i++) node.appendChild(kids[i]);
     }
 
     function el(tag, className, text) {
@@ -309,16 +341,16 @@
     }
 
     // Jittered back-off so hundreds of phones retrying together don't hit the server in lockstep.
-    async function withRetry(task) {
-      let last;
-      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-        try { return await task(); } catch (error) {
-          last = error;
-          if (!error.isNetwork) throw error;
-          if (attempt < MAX_ATTEMPTS) await sleep(900 * attempt * (0.75 + Math.random() * 0.5));
-        }
+    function withRetry(task) {
+      let attempt = 0;
+      function run() {
+        attempt++;
+        return task().catch(error => {
+          if (!error.isNetwork || attempt >= MAX_ATTEMPTS) throw error;
+          return sleep(900 * attempt * (0.75 + Math.random() * 0.5)).then(run);
+        });
       }
-      throw last;
+      return run();
     }
 
     let mode = null;                       // 'lookup' (server filters) | 'legacy' (full download)
@@ -331,9 +363,9 @@
     const resultCache = new Map();         // sha256(id) → { at, list }
     let snapshot = null;                   // legacy only: { at, byKey: Map<sha256(id), reservations[]> }
 
-    async function fetchLegacy(key) {
-      if (!snapshot || Date.now() - snapshot.at > SNAPSHOT_CACHE_MS) {
-        const response = await withRetry(() => jsonp({ action: 'getData' }));
+    function fetchLegacy(key) {
+      const fresh = snapshot && Date.now() - snapshot.at <= SNAPSHOT_CACHE_MS;
+      const ready = fresh ? Promise.resolve() : withRetry(() => jsonp({ action: 'getData' })).then(response => {
         if (!response || response.ok === false) throw new Error('server');
         const parsed = parseSheet(response.headers, response.rows);
         if (!parsed.hasCode) throw new Error('format');
@@ -343,35 +375,38 @@
           byKey.get(item.key).push(item);
         });
         snapshot = { at: Date.now(), byKey };   // raw rows are discarded here
-      }
-      return snapshot.byKey.get(key) || [];
+      });
+      return ready.then(() => snapshot.byKey.get(key) || []);
     }
 
-    async function fetchReservations(id) {
+    function fetchReservations(id) {
       const key = S.sha256Hex(id);
       const cached = resultCache.get(key);
-      if (cached && Date.now() - cached.at < RESULT_CACHE_MS) return cached.list;
+      if (cached && Date.now() - cached.at < RESULT_CACHE_MS) return Promise.resolve(cached.list);
 
-      let list = null;
-      if (mode !== 'legacy') {
-        // Preferred: the server returns only this employee's rows.
-        const response = await withRetry(() => jsonp({ action: 'lookup', id }));
-        if (response && response.ok === true && Array.isArray(response.rows)) {
-          rememberMode('lookup');
-          const parsed = parseSheet(response.headers, response.rows);
-          list = parsed.hasCode ? parsed.list.filter(item => item.key === key) : parsed.list;
-        } else if (response && /Invalid row or decision/i.test(String(response.error || ''))) {
-          rememberMode('legacy');               // older Apps Script without the lookup action
-        } else {
+      // Preferred: the server returns only this employee's rows.
+      const first = mode === 'legacy' ? Promise.resolve(null) :
+        withRetry(() => jsonp({ action: 'lookup', id })).then(response => {
+          if (response && response.ok === true && Array.isArray(response.rows)) {
+            rememberMode('lookup');
+            const parsed = parseSheet(response.headers, response.rows);
+            return parsed.hasCode ? parsed.list.filter(item => item.key === key) : parsed.list;
+          }
+          if (response && /Invalid row or decision/i.test(String(response.error || ''))) {
+            rememberMode('legacy');               // older Apps Script without the lookup action
+            return null;
+          }
           throw new Error('server');
-        }
-      }
-      if (list === null) list = await fetchLegacy(key);
+        });
 
-      list = sortReservations(list);
-      if (resultCache.size >= 20) resultCache.delete(resultCache.keys().next().value);
-      resultCache.set(key, { at: Date.now(), list });
-      return list;
+      return first
+        .then(list => (list === null ? fetchLegacy(key) : list))
+        .then(list => {
+          list = sortReservations(list);
+          if (resultCache.size >= 20) resultCache.delete(resultCache.keys().next().value);
+          resultCache.set(key, { at: Date.now(), list });
+          return list;
+        });
     }
 
     /* ── Rendering ───────────────────────────────────────────────────── */
@@ -393,8 +428,8 @@
           'No reservations found for this ID. Check the number and try again. Older reservations are removed automatically.',
           'لا توجد حجوزات لهذا الكود. تأكد من الرقم وحاول مرة أخرى. يتم حذف الحجوزات القديمة تلقائيًا.'
         );
-        resultsHead.replaceChildren();
-        resultsBody.replaceChildren();
+        setChildren(resultsHead);
+        setChildren(resultsBody);
         return;
       }
 
@@ -408,7 +443,7 @@
       const headRow = el('tr');
       [t('Clinic', 'العيادة'), labels.date, labels.shift, labels.name, labels.department, t('Status', 'الحالة')]
         .forEach(text => headRow.appendChild(el('th', '', text)));
-      resultsHead.replaceChildren(headRow);
+      setChildren(resultsHead, [headRow]);
 
       const rows = list.map(item => {
         const tr = el('tr');
@@ -430,7 +465,7 @@
         tr.appendChild(statusCell);
         return tr;
       });
-      resultsBody.replaceChildren(...rows);
+      setChildren(resultsBody, rows);
     }
 
     function revealResults() {
@@ -446,8 +481,8 @@
       current = null;
       resultsPanel.classList.add('hidden');
       resultsPanel.classList.remove('reveal');
-      resultsHead.replaceChildren();
-      resultsBody.replaceChildren();
+      setChildren(resultsHead);
+      setChildren(resultsBody);
     }
 
     /* ── Inquiry form ────────────────────────────────────────────────── */
@@ -461,7 +496,7 @@
       form.setAttribute('aria-busy', String(isBusy));
     }
 
-    form.addEventListener('submit', async event => {
+    form.addEventListener('submit', event => {
       event.preventDefault();
       if (busy) return;
 
@@ -486,8 +521,7 @@
         if (rid === requestSeq) setStatus('Still searching, the server is busy...', 'ما زال البحث جاريًا، الخادم مشغول...');
       }, 6000);
 
-      try {
-        const list = await fetchReservations(id);
+      fetchReservations(id).then(list => {
         if (rid !== requestSeq) return;
         current = { id, list };
         renderResults();
@@ -496,17 +530,17 @@
           list.length ? `${list.length} reservation(s) found.` : '',
           list.length ? `تم العثور على ${list.length} حجز.` : ''
         );
-      } catch (error) {
+      }).catch(error => {
         if (rid !== requestSeq) return;
         if (error && error.isNetwork) {
           setStatus('Could not reach the server. Check your connection and try again.', 'تعذر الاتصال بالخادم. تأكد من الإنترنت وحاول مرة أخرى.', true);
         } else {
           setStatus('Something went wrong while loading reservations. Please try again.', 'حدث خطأ أثناء تحميل الحجوزات. حاول مرة أخرى.', true);
         }
-      } finally {
+      }).then(() => {
         clearTimeout(slowTimer);
         if (rid === requestSeq) setBusy(false);
-      }
+      });
     });
 
     function updateClearBtn() {
@@ -568,7 +602,15 @@
     });
 
     updateClearBtn();
+    window.__portalReady = true;
   })();
+  </script>
+  <script>
+    /* ES5-only safety net: if the script above could not even be parsed (very old browser), say so. */
+    if (!window.__portalReady) {
+      var note = document.getElementById('oldBrowserNotice');
+      if (note) note.style.display = 'block';
+    }
   </script>
 </body>
 </html>
