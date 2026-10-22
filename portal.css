@@ -1378,5 +1378,69 @@ html[dir="rtl"].no-flex-gap .status-badge::before { margin-right: 0; margin-left
   .no-flex-gap .inquiry-row > * + *, html[dir="rtl"].no-flex-gap .inquiry-row > * + * { margin-left: 0; margin-right: 0; margin-top: 10px; }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Announcement box (above the clinic hero in index.html).
+   The markup is commented out in index.html; these rules only take effect
+   once it is uncommented.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --notice-bg: #fff8e1;
+  --notice-line: #f0c36d;
+  --notice-text: #5c4300;
+  --notice-icon: #b27700;
+}
+
+:root[data-theme="dark"] {
+  --notice-bg: rgba(241, 199, 91, 0.12);
+  --notice-line: #b8913a;
+  --notice-text: #f6e3b0;
+  --notice-icon: #f1c75b;
+}
+
+.announcement-box {
+  display: flex;
+  align-items: flex-start;
+  grid-gap: 12px;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--notice-line);
+  border-inline-start: 5px solid var(--notice-icon);
+  border-radius: 12px;
+  background: var(--notice-bg);
+  color: var(--notice-text);
+}
+
+.announcement-icon {
+  flex: 0 0 auto;
+  font-size: 1.4rem;
+  line-height: 1.3;
+  color: var(--notice-icon);
+}
+
+.announcement-body { min-width: 0; }
+
+.announcement-title {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.announcement-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+}
+
+/* Browsers without flex `gap` (see .no-flex-gap detection in index.html) */
+.no-flex-gap .announcement-icon { margin-right: 12px; }
+html[dir="rtl"].no-flex-gap .announcement-icon { margin-right: 0; margin-left: 12px; }
+
+@media (max-width: 480px) {
+  .announcement-box { padding: 12px 14px; border-radius: 10px; }
+}
+
 /* Old engines without the [hidden] default (and the no-JS notice) */
 [hidden] { display: none !important; }
