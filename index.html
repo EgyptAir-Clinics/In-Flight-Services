@@ -45,6 +45,18 @@
       } catch (e) { /* assume supported */ }
     })();
   </script>
+  <style>
+    /* Title row: heading on one side, orientation-document download on the other. */
+    .hero-head { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: justify; justify-content: space-between; flex-wrap: wrap; }
+    .hero-head h1 { margin-right: 16px; }
+    html[dir="rtl"] .hero-head h1 { margin-right: 0; margin-left: 16px; }
+    .hero-doc-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; margin: 6px 0; padding: 0 22px; border: 2px solid rgba(255, 255, 255, 0.85); border-radius: 10px; background: rgba(255, 255, 255, 0.12); color: #ffffff; font-size: 1rem; font-weight: 800; text-decoration: none; touch-action: manipulation; }
+    @media (hover: hover) { .hero-doc-btn:hover { background: rgba(255, 255, 255, 0.24); } }
+    .hero-doc-btn:active { transform: translateY(1px); }
+    .hero-doc-btn:focus-visible { outline: 3px solid #ffffff; outline-offset: 3px; }
+    @media (max-width: 560px) { .hero-doc-btn { width: 100%; } }
+    .hero-doc-btn[hidden] { display: none !important; }
+  </style>
 </head>
 <body>
   <header class="portal-header">
@@ -67,21 +79,7 @@
     <p class="empty-state" id="oldBrowserNotice" style="display:none" role="alert">This page needs a newer browser. Please update your browser or open the page in Chrome / Safari. / هذه الصفحة تحتاج إلى متصفح أحدث. يرجى تحديث المتصفح أو فتح الصفحة في Chrome أو Safari.</p>
     <noscript><p class="empty-state">JavaScript is required to use this page. / هذه الصفحة تحتاج إلى تفعيل JavaScript.</p></noscript>
 
-    <!-- ===================================================================
-         ANNOUNCEMENT BOX  (currently HIDDEN)
-         ---------------------------------------------------------------
-         To SHOW it:
-           1. Delete the two comment-marker lines that wrap the <section>
-              below: the one just above it and the one just under it.
-           2. Replace the Arabic text in data-ar="..." AND the visible text
-              next to it with your announcement.
-           3. Replace the English text in data-en="..." (shown when the
-              visitor switches to EN).
-         To HIDE it again: put the comment markers back.
-         Tip: keep the visible text identical to data-ar, because the
-         language switcher re-writes it from the data-en / data-ar values.
-         ==================================================================== -->
-    <!--
+
     <section class="announcement-box" role="alert" aria-live="polite">
       <span class="announcement-icon" aria-hidden="true">&#9888;</span>
       <div class="announcement-body">
@@ -89,11 +87,12 @@
         <p class="announcement-text" data-en="Write your English announcement here." data-ar="اكتب نص الإعلان هنا.">اكتب نص الإعلان هنا.</p>
       </div>
     </section>
-    -->
 
     <section class="clinic-hero" aria-labelledby="heroTitle">
-      <div>
+      <div class="hero-head">
         <h1 id="heroTitle" data-en="Clinic reservations" data-ar="حجوزات العيادات">حجوزات العيادات</h1>
+        <!-- Orientation-document button is HIDDEN. To show it again, delete the word  hidden  from the next line. -->
+        <a class="hero-doc-btn" hidden href="https://drive.google.com/uc?export=download&amp;id=1z6rtJutWPIbnsQlBJMzIQ8M-s9zOlXao" target="_blank" rel="noopener noreferrer" download data-en="Download orientation document" data-ar="تحميل وثيقة التعارف">تحميل وثيقة التعارف</a>
       </div>
       <p data-en="Book a visit to one of the clinics, or look up a reservation you already made." data-ar="احجز موعدًا في إحدى العيادات، أو استعلم عن حجز سجلته من قبل.">احجز موعدًا في إحدى العيادات، أو استعلم عن حجز سجلته من قبل.</p>
       <div class="hero-action">
